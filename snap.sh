@@ -12,7 +12,7 @@ pools=(10k ssd)
 plog=/var/log/snaps/ # path del fichero de log
 rotacion=7 # periodo de retención en días
 fecharotado=`date '+%y.%m.%b' --date='-'$rotacion' day'`
-fecha=`dare '+%c';
+fecha=`datre '+%c'`
 # recorremos todos los pools
 echo "############################################################"
 echo "Snapshots de los pools a fecha... " $fecha
@@ -26,22 +26,27 @@ for i in ${pools[@]}; do
         echo $fechalog "############################################################" >> $log
         for j in ${objetos[@]}; do
             # Creación de snaps
-                echo $fechalog " INFO - Generando Snapshont del objeto: "$j >> $log
+                echo $fechalog "INFO - Generando Snapshot del objeto: "$j >> $log
                 fecha=`date '+%y.%m.%d.%H.%M.%S'`
                 fechalog=`date '+%d/%b/%y %T'`
-                echo rbd snap create $i/$j@daily-$fecha
-                echo $fechalog " " $i/$j@daily-$fecha >> $log
-                rbd snap ls $i/$j >> $log
-                echo $fechalog " INFO - Fin Snapshont del objeto: "$j >> $log
+#               rbd snap create $i/$j@daily-$fecha
+                echo $fechalog "INFO -" $i/$j@daily-$fecha >> $log
+                echo $fechalog "INFO - Fin Snapshot del objeto: "$j >> $log
+                fechalog=`date '+%d/%b/%y %T'`
+                robjetos=`rbd snap ls $i'/'$j | grep 080716`
+                z=0
+                for k in ${robjetos[@]}; do
+                        snapinfo[z]=$k
+                        z=$z+1
+                done
+                echo $fechalog "INFO -" $i/$j@daily-$fecha >> $log
+                echo $fechalog "INFO - Fin Snapshot del objeto: "$j >> $log
+
+                echo $fechalog "INFO - Fin Snapshot del objeto: "$j >> $log
             # Fin creación snaps
             # Rotado de snaps
-                fechalog=`date '+%d/%b/%y %T'`
-                robjetos= rbd -p $i ls | grep 8716
-                for k in ${robjetos[@]}; do
-                        echo $k
-                        echo rbd snap rm $i/$j@daily-$fecha
-                        echo $fecchalog " INFO - Rotado de snap: "$j >> $log
-                done
+                echo rbd snap rm $i/$j@${snapinfo[1]}
+                echo $fecchalog "INFO - Rotado de snap: "$j >> $log
             # Fin Rotado de snaps
         done
         echo $fechalog "############################################################" >> $log
