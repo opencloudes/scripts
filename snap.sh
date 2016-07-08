@@ -30,27 +30,35 @@ for i in ${pools[@]}; do
                 fecha=`date '+%y.%m.%d.%H.%M.%S'`
                 fechalog=`date '+%d/%b/%y %T'`
 #               rbd snap create $i/$j@daily-$fecha
-                echo $fechalog "INFO -" $i/$j@daily-$fecha >> $log
-                echo $fechalog "INFO - Fin Snapshot del objeto: "$j >> $log
                 fechalog=`date '+%d/%b/%y %T'`
-                robjetos=`rbd snap ls $i'/'$j | grep 080716`
+                robjetos=""
+                robjetos=`rbd snap ls $i'/'$j | grep $fecha`
                 z=0
                 for k in ${robjetos[@]}; do
                         snapinfo[z]=$k
                         z=$z+1
                 done
-                echo $fechalog "INFO -" $i/$j@daily-$fecha >> $log
-                echo $fechalog "INFO - Fin Snapshot del objeto: "$j >> $log
-
+                        echo "control "$j
+                        echo ${snapinfo[*]}
+                echo $fechalog "INFO -" $i/$j@daily-$fecha " SnapID: " ${snapinfo[0]}>> $log
                 echo $fechalog "INFO - Fin Snapshot del objeto: "$j >> $log
             # Fin creación snaps
             # Rotado de snaps
+                fecharotado=8716
+                robjetos=`rbd snap ls $i'/'$j | grep $fecharotado`
+                z=0
+                for k in ${robjetos[@]}; do
+                        snapinfo[z]=$k
+                        z=$z+1
+                done
+                fechalog=`date '+%d/%b/%y %T'`
+                echo $fechalog "INFO - Rotado de snap: "$j >> $log
                 echo rbd snap rm $i/$j@${snapinfo[1]}
-                echo $fecchalog "INFO - Rotado de snap: "$j >> $log
+                echo $fechalog "INFO - Borrado de snap id: ${snapinfo[0]} en "$j >> $log
             # Fin Rotado de snaps
         done
         echo $fechalog "############################################################" >> $log
-        echo $fechalog "#           INFO - Fin $i  $fechalog            #" >> $log
+        echo $fechalog "#           INFO - Fin $i  $fechalog            " >> $log
         echo $fechalog "############################################################" >> $log
 done
 
