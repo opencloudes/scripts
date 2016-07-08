@@ -3,7 +3,7 @@
 #
 # Script para el tratamiento automatico de snapshots en un cluster Ceph
 # autor: Luis Ramirez - OpenCloud.es
-# version: 0.91a
+# version: 0.95a
 # fecha: 8/7/1026
 #
 ################################################################################
