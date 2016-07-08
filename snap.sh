@@ -7,8 +7,7 @@
 # fecha: 8/7/1026
 #
 ################################################################################
-#pools=(sata 10k ssd docout10k docoutssd)  # listado de pools a realizar snaps
-pools=(10k ssd)
+pools=(sata 10k ssd docout10k docoutssd)  # listado de pools a realizar snaps
 plog=/var/log/snaps/ # path del fichero de log
 rotacion=7 # periodo de retención en días
 fecharotado=`date '+%y.%m.%b' --date='-'$rotacion' day'`
@@ -29,7 +28,7 @@ for i in ${pools[@]}; do
                 echo $fechalog "INFO - Generando Snapshot del objeto: "$j >> $log
                 fecha=`date '+%y.%m.%d.%H.%M.%S'`
                 fechalog=`date '+%d/%b/%y %T'`
-#               rbd snap create $i/$j@daily-$fecha
+                rbd snap create $i/$j@daily-$fecha
                 fechalog=`date '+%d/%b/%y %T'`
                 robjetos=""
                 robjetos=`rbd snap ls $i'/'$j | grep $fecha`
@@ -38,8 +37,6 @@ for i in ${pools[@]}; do
                         snapinfo[z]=$k
                         z=$z+1
                 done
-                        echo "control "$j
-                        echo ${snapinfo[*]}
                 echo $fechalog "INFO -" $i/$j@daily-$fecha " SnapID: " ${snapinfo[0]}>> $log
                 echo $fechalog "INFO - Fin Snapshot del objeto: "$j >> $log
             # Fin creación snaps
@@ -53,7 +50,8 @@ for i in ${pools[@]}; do
                 done
                 fechalog=`date '+%d/%b/%y %T'`
                 echo $fechalog "INFO - Rotado de snap: "$j >> $log
-                echo rbd snap rm $i/$j@${snapinfo[1]}
+                rbd snap rm $i/$j@${snapinfo[1]}
+		fechalog=`date '+%d/%b/%y %T'`
                 echo $fechalog "INFO - Borrado de snap id: ${snapinfo[0]} en "$j >> $log
             # Fin Rotado de snaps
         done
