@@ -3,8 +3,11 @@
 #
 # Script para el tratamiento automatico de snapshots en un cluster Ceph
 # autor: Luis Ramirez - OpenCloud.es
-# version: 0.96a
+# version: 1.01
 # fecha: 8/7/1026
+#
+# To-Do: Validar que existen snaps a rotar
+#
 #
 ################################################################################
 pools=(sata 10k ssd docout10k docoutssd)  # listado de pools a realizar snaps
